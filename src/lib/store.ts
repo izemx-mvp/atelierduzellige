@@ -273,12 +273,17 @@ export const useStore = create<DataState & Actions>()(
 /** Hydration flag — true once localStorage has been read on the client. */
 import { useEffect, useState } from "react";
 export function useHydrated() {
-  const [h, setH] = useState(useStore.persist.hasHydrated());
+  const persistApi = useStore.persist;
+  const [h, setH] = useState(() => persistApi?.hasHydrated?.() ?? false);
   useEffect(() => {
-    const unsub = useStore.persist.onFinishHydration(() => setH(true));
-    if (useStore.persist.hasHydrated()) setH(true);
+    if (!persistApi) {
+      setH(true);
+      return;
+    }
+    const unsub = persistApi.onFinishHydration(() => setH(true));
+    if (persistApi.hasHydrated()) setH(true);
     return unsub;
-  }, []);
+  }, [persistApi]);
   return h;
 }
 
