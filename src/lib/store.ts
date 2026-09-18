@@ -259,7 +259,12 @@ export const useStore = create<DataState & Actions>()(
     },
     {
       name: "atz-erp-v1",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined"
+          ? window.localStorage
+          : // SSR fallback: no-op storage so the persist API exists during server rendering.
+            ({ getItem: () => null, setItem: () => {}, removeItem: () => {} } as Storage),
+      ),
       partialize: (s) => Object.fromEntries(Object.entries(s).filter(([, v]) => typeof v !== "function")) as DataState,
     },
   ),
