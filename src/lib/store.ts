@@ -263,7 +263,7 @@ export const useStore = create<DataState & Actions>()(
         typeof window !== "undefined"
           ? window.localStorage
           : // SSR fallback: no-op storage so the persist API exists during server rendering.
-            ({ getItem: () => null, setItem: () => {}, removeItem: () => {} } as Storage),
+            { getItem: () => null, setItem: () => {}, removeItem: () => {} },
       ),
       partialize: (s) => Object.fromEntries(Object.entries(s).filter(([, v]) => typeof v !== "function")) as DataState,
     },
