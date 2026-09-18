@@ -36,12 +36,12 @@ export function AppHeader() {
       let label = ROUTE_LABELS[p];
       if (!label) {
         const prev = parts[i - 1];
-        const ent = prev === "clients" ? s.clients.find((c) => c.id === p)?.name : prev === "devis" ? s.quotes.find((q) => q.id === p)?.number : prev === "commandes" ? s.orders.find((o) => o.id === p)?.number : undefined;
+        const ent = prev === "clients" ? s.clients.find((c) => c.id === p)?.name : prev === "prospects" ? s.prospects.find((x) => x.id === p)?.name : prev === "devis" ? s.quotes.find((q) => q.id === p)?.number : prev === "commandes" ? s.orders.find((o) => o.id === p)?.number : undefined;
         label = ent ?? p;
       }
       return { label, path, last: i === parts.length - 1 };
     });
-  }, [pathname, s.clients, s.quotes, s.orders]);
+  }, [pathname, s.clients, s.prospects, s.quotes, s.orders]);
 
   const logout = () => {
     s.logout();
@@ -52,12 +52,12 @@ export function AppHeader() {
   const go = (href: string) => { setSearchOpen(false); navigate({ href }); };
   const results = useMemo(() => ({
     clients: s.clients.map((c) => ({ id: c.id, label: c.name, sub: `${c.company} · ${c.country}`, to: `/clients/${c.id}` })),
-    prospects: s.prospects.map((p) => ({ id: p.id, label: p.name, sub: `${p.company} · ${p.stage}`, to: `/prospects` })),
+    prospects: s.prospects.map((p) => ({ id: p.id, label: p.name, sub: `${p.company} · ${p.stage}`, to: `/prospects/${p.id}` })),
     produits: s.products.map((p) => ({ id: p.id, label: p.name, sub: `${p.reference} · ${p.collection}`, to: `/produits` })),
     devis: s.quotes.map((q) => ({ id: q.id, label: q.number, sub: `${q.projectName} · ${q.status}`, to: `/devis/${q.id}` })),
     commandes: s.orders.map((o) => ({ id: o.id, label: o.number, sub: `${o.projectName} · ${o.status}`, to: `/commandes/${o.id}` })),
     echantillons: s.samples.map((x) => ({ id: x.id, label: x.reference, sub: x.status, to: `/echantillons` })),
-    rdv: s.appointments.map((a) => ({ id: a.id, label: a.title, sub: fmtDateTime(a.start), to: `/rendez-vous` })),
+    rdv: s.appointments.map((a) => ({ id: a.id, label: a.title, sub: fmtDateTime(a.start), to: `/agents/booking` })),
   }), [s.clients, s.prospects, s.products, s.quotes, s.orders, s.samples, s.appointments]);
 
   const groups: { key: keyof typeof results; label: string; icon: typeof Users }[] = [

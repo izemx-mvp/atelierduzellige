@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles, Loader2, Copy, RefreshCw, Save, CalendarPlus, Trash2, Pencil, Lightbulb, Check } from "lucide-react";
+import { Sparkles, Loader2, Copy, RefreshCw, Save, CalendarPlus, Trash2, Pencil, Lightbulb, Check, Send, FileEdit, Layers3 } from "lucide-react";
 import { useStore, useHydrated, fmtDate } from "@/lib/store";
 import { generatePosts, type GenParams } from "@/lib/agents";
 import { COLLECTIONS, type SocialPost, type PostStatus, type Network, type PostType } from "@/lib/types";
-import { PageHeader, LoadingBlock, StatusBadge, Section, Field, ConfirmDialog, SearchInput, EmptyState } from "@/components/shared";
+import { PageHeader, LoadingBlock, StatusBadge, Section, Field, ConfirmDialog, SearchInput, EmptyState, KpiCard } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/agents/cm/idees")({
-  head: () => ({ meta: [{ title: "CM — Idées — Atelier du Zellige" }, { name: "description", content: "Génération de contenus social media assistée par IA : Instagram, Facebook, TikTok." }, { property: "og:title", content: "Community Manager — Idées" }, { property: "og:description", content: "Génération de contenus par l'agent IA Community Manager." }] }),
+  head: () => ({ meta: [{ title: "CM — Idées — Atelier du Zellige" }, { name: "description", content: "Génération de contenus social media assistée par IA : Instagram, Facebook, TikTok." }, { property: "og:title", content: "Community Manager — Idées" }, { property: "og:description", content: "Génération de contenus par l'agent IA Community Manager." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: IdeasPage,
 });
 
@@ -57,10 +57,13 @@ function IdeasPage() {
     if (!schedule) return; const at = new Date(schedule.at).toISOString();
     if (schedule.draft) { const { tmpId, ...rest } = schedule.draft; s.addPost({ ...rest, status: "Planifié", scheduledAt: at }); setDrafts((ds) => ds.filter((x) => x.tmpId !== tmpId)); }
     if (schedule.post) s.updatePost(schedule.post.id, { status: "Planifié", scheduledAt: at });
-    s.log({ agent: "Community Manager", action: "Ajout au planning", target: (schedule.draft ?? schedule.post)!.title, result: fmtDate(at), status: "Succès", link: "/agents/cm/planning" });
+    const scheduledContent = schedule.draft ?? schedule.post;
+    if (!scheduledContent) return;
+    s.log({ agent: "Community Manager", action: "Ajout au planning", target: scheduledContent.title, result: fmtDate(at), status: "Succès", link: "/agents/cm/planning" });
     setSchedule(null); toast.success("Ajouté au planning.", { action: { label: "Voir le planning", onClick: () => navigate({ to: "/agents/cm/planning" }) } });
   };
   const defaultAt = () => { const d = new Date(); d.setDate(d.getDate() + 2); d.setHours(18, 0, 0, 0); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
+  const createPost = () => setEdit({ tmpId: Math.random().toString(36).slice(2), title: "", text: "", hashtags: [], cta: p.cta, network: p.network, type: p.type, productId: p.productId, collection: p.collection, objective: p.objective, tone: p.tone, language: p.language, status: "Brouillon" });
 
   const Card = ({ d, actions }: { d: { title: string; text: string; hashtags: string[]; cta: string; network: Network; type: PostType; productId?: string; status: PostStatus; language: string }; actions: React.ReactNode }) => (
     <div className="surface flex flex-col p-4">
@@ -76,8 +79,15 @@ function IdeasPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Agent IA · Community Manager" title="CM — Idées" description="Données → Analyse IA → Recommandation → Validation humaine → Publication." />
-      <div className="grid gap-4 xl:grid-cols-[380px_1fr]">
+      <PageHeader eyebrow="Agent IA · Community Manager" title="CM — Idées" description="Données → Analyse IA → Recommandation → Validation humaine → Publication."
+        actions={<><Button variant="outline" onClick={createPost}><Pencil className="h-4 w-4" /> Créer un post</Button><Button className="bg-gold text-gold-foreground hover:bg-gold/90" onClick={generate} disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Générer avec l'IA</Button></>} />
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <KpiCard label="Contenus" value={s.posts.length} icon={Layers3} accent />
+        <KpiCard label="Brouillons" value={s.posts.filter((x) => ["Brouillon", "Généré"].includes(x.status)).length} icon={FileEdit} />
+        <KpiCard label="Planifiés" value={s.posts.filter((x) => x.status === "Planifié").length} icon={CalendarPlus} />
+        <KpiCard label="Publiés" value={s.posts.filter((x) => x.status === "Publié").length} icon={Send} />
+      </div>
+      <div className="space-y-4">
         <Section title="Consigne de génération" description="Paramètres de l'agent">
           <div className="space-y-3">
             <Field label="Consigne"><Textarea rows={3} value={p.brief} onChange={(e) => setP({ ...p, brief: e.target.value })} /></Field>
@@ -93,12 +103,11 @@ function IdeasPage() {
             </div>
             <Field label="Audience"><Input value={p.audience} onChange={(e) => setP({ ...p, audience: e.target.value })} /></Field>
             <Field label="Call-to-action (optionnel)"><Input value={p.cta} onChange={(e) => setP({ ...p, cta: e.target.value })} placeholder="Par défaut selon la langue" /></Field>
-            <Button className="w-full bg-gold text-gold-foreground hover:bg-gold/90" onClick={generate} disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Générer avec l'IA</Button>
+            <div className="flex justify-end"><Button className="bg-gold text-gold-foreground hover:bg-gold/90" onClick={generate} disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Générer avec l'IA</Button></div>
             {s.cmSettings.humanValidation && <p className="text-[11px] text-muted-foreground"><Check className="mr-1 inline h-3 w-3 text-success" />Validation humaine obligatoire activée : aucun contenu n'est publié sans votre accord.</p>}
           </div>
         </Section>
 
-        <div className="space-y-4">
           <Section title="Résultats IA" description={drafts.length ? `${drafts.length} variantes — modifiez, régénérez ou enregistrez` : "Lancez une génération pour obtenir des propositions"}>
             {loading && drafts.length === 0 ? <div className="grid gap-3 md:grid-cols-3">{[0, 1, 2].map((i) => <div key={i} className="h-64 animate-pulse rounded-lg bg-secondary" />)}</div>
               : drafts.length === 0 ? <div className="flex flex-col items-center py-10 text-center text-sm text-muted-foreground"><Lightbulb className="mb-2 h-8 w-8 text-gold" />L'agent proposera 3 variantes éditables adaptées au réseau choisi.</div>
@@ -138,7 +147,6 @@ function IdeasPage() {
               </ul>
             )}
           </Section>
-        </div>
       </div>
 
       {/* Edit draft / post */}
@@ -154,10 +162,11 @@ function IdeasPage() {
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Réseau"><Select value={cur.network} onValueChange={(v) => upd({ network: v as Network })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Instagram", "Facebook", "TikTok"].map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent></Select></Field>
                 <Field label="Statut"><Select value={cur.status} onValueChange={(v) => upd({ status: v as PostStatus })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{STATUSES.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent></Select></Field>
+                <Field label="Produit associé" className="col-span-2"><Select value={cur.productId ?? "none"} onValueChange={(v) => { const product = s.products.find((x) => x.id === v); upd({ productId: v === "none" ? undefined : v, collection: product?.collection ?? cur.collection }); }}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none">Aucun</SelectItem>{s.products.map((x) => <SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>)}</SelectContent></Select></Field>
               </div>
             </div>
           ); })()}
-          <DialogFooter><Button variant="outline" onClick={() => { setEdit(null); setEditPost(null); }}>Annuler</Button><Button className="bg-gold text-gold-foreground hover:bg-gold/90" onClick={() => { if (edit) { setDrafts((ds) => ds.map((x) => (x.tmpId === edit.tmpId ? edit : x))); setEdit(null); } if (editPost) { const { id, ...rest } = editPost; s.updatePost(id, rest); setEditPost(null); } toast.success("Modifications enregistrées."); }}>Enregistrer</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => { setEdit(null); setEditPost(null); }}>Annuler</Button><Button className="bg-gold text-gold-foreground hover:bg-gold/90" onClick={() => { if (edit) { setDrafts((ds) => ds.some((x) => x.tmpId === edit.tmpId) ? ds.map((x) => (x.tmpId === edit.tmpId ? edit : x)) : [edit, ...ds]); setEdit(null); } if (editPost) { const { id, ...rest } = editPost; s.updatePost(id, rest); setEditPost(null); } toast.success("Modifications enregistrées."); }}>Enregistrer</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 

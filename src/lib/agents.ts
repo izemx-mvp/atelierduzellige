@@ -226,8 +226,8 @@ export function useAgentEngines() {
           const limit = r.at === "24h" ? 24 * 3600e3 : 3600e3;
           if (!r.sent && diff > 0 && diff <= limit) {
             st.updateAppointment(a.id, { reminders: a.reminders.map((x) => (x.at === r.at ? { ...x, sent: true } : x)) });
-            st.notify({ title: `Rappel ${r.at} — ${a.title}`, description: `Rendez-vous ${a.type.toLowerCase()} prévu ${new Date(a.start).toLocaleString("fr-FR", { weekday: "long", hour: "2-digit", minute: "2-digit" })}.`, link: "/rendez-vous", severity: "info" });
-            st.log({ agent: "Prise de rendez-vous", action: `Rappel ${r.at}`, target: a.title, result: "Rappel envoyé (simulé)", status: "Succès", link: "/rendez-vous" });
+            st.notify({ title: `Rappel ${r.at} — ${a.title}`, description: `Rendez-vous ${a.type.toLowerCase()} prévu ${new Date(a.start).toLocaleString("fr-FR", { weekday: "long", hour: "2-digit", minute: "2-digit" })}.`, link: "/agents/booking", severity: "info" });
+            st.log({ agent: "Prise de rendez-vous", action: `Rappel ${r.at}`, target: a.title, result: "Rappel envoyé (simulé)", status: "Succès", link: "/agents/booking" });
           }
         });
       });

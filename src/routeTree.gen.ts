@@ -20,7 +20,6 @@ import { Route as AppExportRouteImport } from './routes/_app/export'
 import { Route as AppParametresRouteImport } from './routes/_app/parametres'
 import { Route as AppProductionRouteImport } from './routes/_app/production'
 import { Route as AppProduitsRouteImport } from './routes/_app/produits'
-import { Route as AppProspectsRouteImport } from './routes/_app/prospects'
 import { Route as AppRendezVousRouteImport } from './routes/_app/rendez-vous'
 import { Route as AppAgentsIndexRouteImport } from './routes/_app/agents/index'
 import { Route as AppAgentsActiviteRouteImport } from './routes/_app/agents/activite'
@@ -34,6 +33,8 @@ import { Route as AppCommandesIndexRouteImport } from './routes/_app/commandes/i
 import { Route as AppCommandesIdRouteImport } from './routes/_app/commandes/$id'
 import { Route as AppDevisIndexRouteImport } from './routes/_app/devis/index'
 import { Route as AppDevisIdRouteImport } from './routes/_app/devis/$id'
+import { Route as AppProspectsIndexRouteImport } from './routes/_app/prospects/index'
+import { Route as AppProspectsIdRouteImport } from './routes/_app/prospects/$id'
 import { Route as AppAgentsCmIndexRouteImport } from './routes/_app/agents/cm/index'
 import { Route as AppAgentsCmIdeesRouteImport } from './routes/_app/agents/cm/idees'
 import { Route as AppAgentsCmParametresRouteImport } from './routes/_app/agents/cm/parametres'
@@ -91,11 +92,6 @@ const AppProductionRoute = AppProductionRouteImport.update({
 const AppProduitsRoute = AppProduitsRouteImport.update({
   id: '/produits',
   path: '/produits',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppProspectsRoute = AppProspectsRouteImport.update({
-  id: '/prospects',
-  path: '/prospects',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppRendezVousRoute = AppRendezVousRouteImport.update({
@@ -163,6 +159,16 @@ const AppDevisIdRoute = AppDevisIdRouteImport.update({
   path: '/devis/$id',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppProspectsIndexRoute = AppProspectsIndexRouteImport.update({
+  id: '/prospects/',
+  path: '/prospects/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppProspectsIdRoute = AppProspectsIdRouteImport.update({
+  id: '/prospects/$id',
+  path: '/prospects/$id',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppAgentsCmIndexRoute = AppAgentsCmIndexRouteImport.update({
   id: '/agents/cm/',
   path: '/agents/cm/',
@@ -195,7 +201,6 @@ export interface FileRoutesByFullPath {
   '/parametres': typeof AppParametresRoute
   '/production': typeof AppProductionRoute
   '/produits': typeof AppProduitsRoute
-  '/prospects': typeof AppProspectsRoute
   '/rendez-vous': typeof AppRendezVousRoute
   '/agents/activite': typeof AppAgentsActiviteRoute
   '/agents/booking': typeof AppAgentsBookingRoute
@@ -205,10 +210,12 @@ export interface FileRoutesByFullPath {
   '/clients/$id': typeof AppClientsIdRoute
   '/commandes/$id': typeof AppCommandesIdRoute
   '/devis/$id': typeof AppDevisIdRoute
+  '/prospects/$id': typeof AppProspectsIdRoute
   '/agents/': typeof AppAgentsIndexRoute
   '/clients/': typeof AppClientsIndexRoute
   '/commandes/': typeof AppCommandesIndexRoute
   '/devis/': typeof AppDevisIndexRoute
+  '/prospects/': typeof AppProspectsIndexRoute
   '/agents/cm/idees': typeof AppAgentsCmIdeesRoute
   '/agents/cm/parametres': typeof AppAgentsCmParametresRoute
   '/agents/cm/planning': typeof AppAgentsCmPlanningRoute
@@ -225,7 +232,6 @@ export interface FileRoutesByTo {
   '/parametres': typeof AppParametresRoute
   '/production': typeof AppProductionRoute
   '/produits': typeof AppProduitsRoute
-  '/prospects': typeof AppProspectsRoute
   '/rendez-vous': typeof AppRendezVousRoute
   '/agents/activite': typeof AppAgentsActiviteRoute
   '/agents/booking': typeof AppAgentsBookingRoute
@@ -235,10 +241,12 @@ export interface FileRoutesByTo {
   '/clients/$id': typeof AppClientsIdRoute
   '/commandes/$id': typeof AppCommandesIdRoute
   '/devis/$id': typeof AppDevisIdRoute
+  '/prospects/$id': typeof AppProspectsIdRoute
   '/agents': typeof AppAgentsIndexRoute
   '/clients': typeof AppClientsIndexRoute
   '/commandes': typeof AppCommandesIndexRoute
   '/devis': typeof AppDevisIndexRoute
+  '/prospects': typeof AppProspectsIndexRoute
   '/agents/cm/idees': typeof AppAgentsCmIdeesRoute
   '/agents/cm/parametres': typeof AppAgentsCmParametresRoute
   '/agents/cm/planning': typeof AppAgentsCmPlanningRoute
@@ -257,7 +265,6 @@ export interface FileRoutesById {
   '/_app/parametres': typeof AppParametresRoute
   '/_app/production': typeof AppProductionRoute
   '/_app/produits': typeof AppProduitsRoute
-  '/_app/prospects': typeof AppProspectsRoute
   '/_app/rendez-vous': typeof AppRendezVousRoute
   '/_app/agents/activite': typeof AppAgentsActiviteRoute
   '/_app/agents/booking': typeof AppAgentsBookingRoute
@@ -267,10 +274,12 @@ export interface FileRoutesById {
   '/_app/clients/$id': typeof AppClientsIdRoute
   '/_app/commandes/$id': typeof AppCommandesIdRoute
   '/_app/devis/$id': typeof AppDevisIdRoute
+  '/_app/prospects/$id': typeof AppProspectsIdRoute
   '/_app/agents/': typeof AppAgentsIndexRoute
   '/_app/clients/': typeof AppClientsIndexRoute
   '/_app/commandes/': typeof AppCommandesIndexRoute
   '/_app/devis/': typeof AppDevisIndexRoute
+  '/_app/prospects/': typeof AppProspectsIndexRoute
   '/_app/agents/cm/idees': typeof AppAgentsCmIdeesRoute
   '/_app/agents/cm/parametres': typeof AppAgentsCmParametresRoute
   '/_app/agents/cm/planning': typeof AppAgentsCmPlanningRoute
@@ -289,7 +298,6 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/production'
     | '/produits'
-    | '/prospects'
     | '/rendez-vous'
     | '/agents/activite'
     | '/agents/booking'
@@ -299,10 +307,12 @@ export interface FileRouteTypes {
     | '/clients/$id'
     | '/commandes/$id'
     | '/devis/$id'
+    | '/prospects/$id'
     | '/agents/'
     | '/clients/'
     | '/commandes/'
     | '/devis/'
+    | '/prospects/'
     | '/agents/cm/idees'
     | '/agents/cm/parametres'
     | '/agents/cm/planning'
@@ -319,7 +329,6 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/production'
     | '/produits'
-    | '/prospects'
     | '/rendez-vous'
     | '/agents/activite'
     | '/agents/booking'
@@ -329,10 +338,12 @@ export interface FileRouteTypes {
     | '/clients/$id'
     | '/commandes/$id'
     | '/devis/$id'
+    | '/prospects/$id'
     | '/agents'
     | '/clients'
     | '/commandes'
     | '/devis'
+    | '/prospects'
     | '/agents/cm/idees'
     | '/agents/cm/parametres'
     | '/agents/cm/planning'
@@ -350,7 +361,6 @@ export interface FileRouteTypes {
     | '/_app/parametres'
     | '/_app/production'
     | '/_app/produits'
-    | '/_app/prospects'
     | '/_app/rendez-vous'
     | '/_app/agents/activite'
     | '/_app/agents/booking'
@@ -360,10 +370,12 @@ export interface FileRouteTypes {
     | '/_app/clients/$id'
     | '/_app/commandes/$id'
     | '/_app/devis/$id'
+    | '/_app/prospects/$id'
     | '/_app/agents/'
     | '/_app/clients/'
     | '/_app/commandes/'
     | '/_app/devis/'
+    | '/_app/prospects/'
     | '/_app/agents/cm/idees'
     | '/_app/agents/cm/parametres'
     | '/_app/agents/cm/planning'
@@ -453,13 +465,6 @@ declare module '@tanstack/react-router' {
       path: '/produits'
       fullPath: '/produits'
       preLoaderRoute: typeof AppProduitsRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/prospects': {
-      id: '/_app/prospects'
-      path: '/prospects'
-      fullPath: '/prospects'
-      preLoaderRoute: typeof AppProspectsRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/rendez-vous': {
@@ -553,6 +558,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevisIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/prospects/': {
+      id: '/_app/prospects/'
+      path: '/prospects'
+      fullPath: '/prospects/'
+      preLoaderRoute: typeof AppProspectsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/prospects/$id': {
+      id: '/_app/prospects/$id'
+      path: '/prospects/$id'
+      fullPath: '/prospects/$id'
+      preLoaderRoute: typeof AppProspectsIdRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/agents/cm/': {
       id: '/_app/agents/cm/'
       path: '/agents/cm'
@@ -593,7 +612,6 @@ interface AppRouteRouteChildren {
   AppParametresRoute: typeof AppParametresRoute
   AppProductionRoute: typeof AppProductionRoute
   AppProduitsRoute: typeof AppProduitsRoute
-  AppProspectsRoute: typeof AppProspectsRoute
   AppRendezVousRoute: typeof AppRendezVousRoute
   AppAgentsActiviteRoute: typeof AppAgentsActiviteRoute
   AppAgentsBookingRoute: typeof AppAgentsBookingRoute
@@ -603,10 +621,12 @@ interface AppRouteRouteChildren {
   AppClientsIdRoute: typeof AppClientsIdRoute
   AppCommandesIdRoute: typeof AppCommandesIdRoute
   AppDevisIdRoute: typeof AppDevisIdRoute
+  AppProspectsIdRoute: typeof AppProspectsIdRoute
   AppAgentsIndexRoute: typeof AppAgentsIndexRoute
   AppClientsIndexRoute: typeof AppClientsIndexRoute
   AppCommandesIndexRoute: typeof AppCommandesIndexRoute
   AppDevisIndexRoute: typeof AppDevisIndexRoute
+  AppProspectsIndexRoute: typeof AppProspectsIndexRoute
   AppAgentsCmIdeesRoute: typeof AppAgentsCmIdeesRoute
   AppAgentsCmParametresRoute: typeof AppAgentsCmParametresRoute
   AppAgentsCmPlanningRoute: typeof AppAgentsCmPlanningRoute
@@ -622,7 +642,6 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppParametresRoute: AppParametresRoute,
   AppProductionRoute: AppProductionRoute,
   AppProduitsRoute: AppProduitsRoute,
-  AppProspectsRoute: AppProspectsRoute,
   AppRendezVousRoute: AppRendezVousRoute,
   AppAgentsActiviteRoute: AppAgentsActiviteRoute,
   AppAgentsBookingRoute: AppAgentsBookingRoute,
@@ -632,10 +651,12 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppClientsIdRoute: AppClientsIdRoute,
   AppCommandesIdRoute: AppCommandesIdRoute,
   AppDevisIdRoute: AppDevisIdRoute,
+  AppProspectsIdRoute: AppProspectsIdRoute,
   AppAgentsIndexRoute: AppAgentsIndexRoute,
   AppClientsIndexRoute: AppClientsIndexRoute,
   AppCommandesIndexRoute: AppCommandesIndexRoute,
   AppDevisIndexRoute: AppDevisIndexRoute,
+  AppProspectsIndexRoute: AppProspectsIndexRoute,
   AppAgentsCmIdeesRoute: AppAgentsCmIdeesRoute,
   AppAgentsCmParametresRoute: AppAgentsCmParametresRoute,
   AppAgentsCmPlanningRoute: AppAgentsCmPlanningRoute,

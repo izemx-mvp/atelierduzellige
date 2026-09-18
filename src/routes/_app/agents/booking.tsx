@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Sparkles, Loader2, CalendarCheck, Check, X, Bell, ArrowRightLeft, Clock } from "lucide-react";
@@ -11,9 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { CalendarWorkspace } from "@/components/appointments/CalendarWorkspace";
 
 export const Route = createFileRoute("/_app/agents/booking")({
-  head: () => ({ meta: [{ title: "Agent Prise de rendez-vous — Atelier du Zellige" }, { name: "description", content: "Booking Center : analyse des demandes, proposition de créneaux, confirmation, déplacement et rappels." }, { property: "og:title", content: "Agent Prise de rendez-vous" }, { property: "og:description", content: "Booking Center piloté par IA." }] }),
+  head: () => ({ meta: [{ title: "Agent Prise de rendez-vous — Atelier du Zellige" }, { name: "description", content: "Agenda global et centre de réservation : demandes, créneaux, confirmations, déplacements et rappels." }, { property: "og:title", content: "Agent Prise de rendez-vous" }, { property: "og:description", content: "Agenda et Booking Center réunis dans une interface unique." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: BookingPage,
 });
 
@@ -50,21 +51,20 @@ function BookingPage() {
     s.addAppointment({ title: `${analysis.type} — ${name}`, contactType, contactId, start: slot.start, end, type: analysis.type, status: "Confirmé", participants: [s.settings.profile.name, name], notes: `Réservé par l'agent IA. Demande : « ${req.slice(0, 120)}… »` });
     if (contactType === "prospect") { const p = s.prospects.find((x) => x.id === contactId); if (p && p.stage === "Nouveau") s.moveProspect(p.id, "Contacté"); }
     s.addMessage({ direction: "out", channel: "Email", contactType, contactId, fromName: s.settings.profile.name, fromEmail: s.settings.profile.email, subject: `Confirmation de rendez-vous — ${fmtDateTime(slot.start)}`, body: `Bonjour ${name.split(" ")[0]},\n\nVotre ${analysis.type.toLowerCase()} est confirmé le ${fmtDateTime(slot.start)}. Vous recevrez un rappel 24h et 1h avant.\n\nÀ très bientôt,\n${s.settings.profile.name}` });
-    s.log({ agent: "Prise de rendez-vous", action: "Confirmation", target: name, result: fmtDateTime(slot.start), status: "Succès", link: "/rendez-vous" });
+    s.log({ agent: "Prise de rendez-vous", action: "Confirmation", target: name, result: fmtDateTime(slot.start), status: "Succès", link: "/agents/booking" });
     setAnalysis(null); toast.success("Rendez-vous confirmé et ajouté au calendrier.");
   };
-  const confirm = (a: Appointment) => { s.updateAppointment(a.id, { status: "Confirmé" }); s.log({ agent: "Prise de rendez-vous", action: "Confirmation", target: a.title, result: "Confirmé", status: "Succès", link: "/rendez-vous" }); toast.success("Rendez-vous confirmé."); };
-  const cancel = (a: Appointment) => { s.updateAppointment(a.id, { status: "Annulé" }); s.log({ agent: "Prise de rendez-vous", action: "Annulation", target: a.title, result: "Annulé", status: "Succès", link: "/rendez-vous" }); toast.success("Rendez-vous annulé."); };
-  const move = (a: Appointment, slot: { start: string; end: string }) => { const dur = new Date(a.end).getTime() - new Date(a.start).getTime(); s.updateAppointment(a.id, { start: slot.start, end: new Date(new Date(slot.start).getTime() + dur).toISOString(), reminders: a.reminders.map((r) => ({ ...r, sent: false })) }); s.log({ agent: "Prise de rendez-vous", action: "Déplacement", target: a.title, result: fmtDateTime(slot.start), status: "Succès", link: "/rendez-vous" }); setMoving(null); toast.success("Rendez-vous déplacé."); };
-  const remind = (a: Appointment, at: "24h" | "1h") => { s.updateAppointment(a.id, { reminders: a.reminders.map((r) => (r.at === at ? { ...r, sent: true } : r)) }); s.notify({ title: `Rappel ${at} — ${a.title}`, description: `Rappel envoyé (simulé) à ${a.participants.join(", ")}.`, link: "/rendez-vous", severity: "info" }); s.log({ agent: "Prise de rendez-vous", action: `Rappel ${at}`, target: a.title, result: "Envoyé (simulé)", status: "Succès", link: "/rendez-vous" }); toast.success(`Rappel ${at} envoyé (simulé).`); };
+  const confirm = (a: Appointment) => { s.updateAppointment(a.id, { status: "Confirmé" }); s.log({ agent: "Prise de rendez-vous", action: "Confirmation", target: a.title, result: "Confirmé", status: "Succès", link: "/agents/booking" }); toast.success("Rendez-vous confirmé."); };
+  const cancel = (a: Appointment) => { s.updateAppointment(a.id, { status: "Annulé" }); s.log({ agent: "Prise de rendez-vous", action: "Annulation", target: a.title, result: "Annulé", status: "Succès", link: "/agents/booking" }); toast.success("Rendez-vous annulé."); };
+  const move = (a: Appointment, slot: { start: string; end: string }) => { const dur = new Date(a.end).getTime() - new Date(a.start).getTime(); s.updateAppointment(a.id, { start: slot.start, end: new Date(new Date(slot.start).getTime() + dur).toISOString(), reminders: a.reminders.map((r) => ({ ...r, sent: false })) }); s.log({ agent: "Prise de rendez-vous", action: "Déplacement", target: a.title, result: fmtDateTime(slot.start), status: "Succès", link: "/agents/booking" }); setMoving(null); toast.success("Rendez-vous déplacé."); };
+  const remind = (a: Appointment, at: "24h" | "1h") => { s.updateAppointment(a.id, { reminders: a.reminders.map((r) => (r.at === at ? { ...r, sent: true } : r)) }); s.notify({ title: `Rappel ${at} — ${a.title}`, description: `Rappel envoyé (simulé) à ${a.participants.join(", ")}.`, link: "/agents/booking", severity: "info" }); s.log({ agent: "Prise de rendez-vous", action: `Rappel ${at}`, target: a.title, result: "Envoyé (simulé)", status: "Succès", link: "/agents/booking" }); toast.success(`Rappel ${at} envoyé (simulé).`); };
 
   const upcoming = [...s.appointments].filter((a) => new Date(a.end) >= new Date() && a.status !== "Annulé").sort((a, b) => a.start.localeCompare(b.start));
   const agentLogs = s.activities.filter((a) => a.agent === "Prise de rendez-vous");
 
   return (
     <div>
-      <PageHeader eyebrow="Agent IA" title="Prise de rendez-vous" description="Booking Center — de la demande au calendrier global, avec rappels automatiques."
-        actions={<Button variant="outline" asChild><Link to="/rendez-vous"><CalendarCheck className="h-4 w-4" /> Calendrier</Link></Button>} />
+      <PageHeader eyebrow="Agent IA" title="Agent Prise de rendez-vous" description="Demandes, réservations et agenda global réunis dans un seul espace." />
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <KpiCard label="À venir" value={upcoming.length} icon={CalendarCheck} accent />
         <KpiCard label="À confirmer" value={s.appointments.filter((a) => a.status === "Proposé").length} icon={Clock} />
@@ -109,6 +109,7 @@ function BookingPage() {
           </ul>
         </Section>
       </div>
+      <div className="mt-4"><CalendarWorkspace /></div>
       <Section title="Historique de l'agent" className="mt-4" noPadding>
         <ul className="divide-y">{agentLogs.slice(0, 8).map((l) => <li key={l.id} className="flex items-center gap-3 px-5 py-2.5 text-sm"><span className="w-28 text-xs text-muted-foreground">{fmtDateTime(l.date)}</span><span className="font-medium">{l.action}</span><span className="flex-1 truncate text-muted-foreground">{l.target} — {l.result}</span><StatusBadge status={l.status} /></li>)}{agentLogs.length === 0 && <li className="p-6 text-center text-sm text-muted-foreground">Aucune activité.</li>}</ul>
       </Section>

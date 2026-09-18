@@ -15,8 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/_app/prospects")({
-  head: () => ({ meta: [{ title: "Prospects / CRM — Atelier du Zellige" }, { name: "description", content: "Pipeline commercial : vue Kanban et tableau, qualification et conversion des prospects." }, { property: "og:title", content: "Prospects / CRM — Atelier du Zellige" }, { property: "og:description", content: "Pipeline commercial d'Atelier du Zellige." }] }),
+export const Route = createFileRoute("/_app/prospects/")({
+  head: () => ({ meta: [{ title: "Prospects / CRM — Atelier du Zellige" }, { name: "description", content: "Pipeline commercial : vue Kanban et tableau, qualification et conversion des prospects." }, { property: "og:title", content: "Prospects / CRM — Atelier du Zellige" }, { property: "og:description", content: "Pipeline commercial d'Atelier du Zellige." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProspectsPage,
 });
 
@@ -66,7 +66,7 @@ function ProspectsPage() {
     if (!sub) return; const p = sub.p;
     if (sub.kind === "note") { if (!subText.trim()) return toast.error("La note est vide."); s.addProspectNote(p.id, subText.trim()); toast.success("Note ajoutée."); }
     if (sub.kind === "task") { if (!subText.trim()) return toast.error("Titre requis."); s.addTask({ title: subText.trim(), dueDate: subDate ? new Date(subDate).toISOString() : undefined, relatedType: "prospect", relatedId: p.id }); toast.success("Tâche créée."); }
-    if (sub.kind === "rdv") { const st = new Date(subDate); const en = new Date(st); en.setHours(st.getHours() + 1); s.addAppointment({ title: subText.trim() || `Rendez-vous — ${p.name}`, contactType: "prospect", contactId: p.id, start: st.toISOString(), end: en.toISOString(), type: "Visio", status: "Proposé", participants: [s.settings.profile.name, p.name], notes: "" }); s.updateProspect(p.id, { stage: p.stage === "Nouveau" ? "Contacté" : p.stage }); toast.success("Rendez-vous planifié.", { action: { label: "Calendrier", onClick: () => navigate({ to: "/rendez-vous" }) } }); }
+    if (sub.kind === "rdv") { const st = new Date(subDate); const en = new Date(st); en.setHours(st.getHours() + 1); s.addAppointment({ title: subText.trim() || `Rendez-vous — ${p.name}`, contactType: "prospect", contactId: p.id, start: st.toISOString(), end: en.toISOString(), type: "Visio", status: "Proposé", participants: [s.settings.profile.name, p.name], notes: "" }); s.updateProspect(p.id, { stage: p.stage === "Nouveau" ? "Contacté" : p.stage }); toast.success("Rendez-vous planifié.", { action: { label: "Calendrier", onClick: () => navigate({ to: "/agents/booking" }) } }); }
     if (sub.kind === "sample") { s.addSample({ contactType: "prospect", contactId: p.id, productId: subProduct, quantity: 2, requestDate: new Date().toISOString(), status: "Demandé", comments: subText }); s.moveProspect(p.id, PROSPECT_STAGES.indexOf(p.stage) < 3 ? "Échantillon" : p.stage); toast.success("Échantillon créé.", { action: { label: "Voir", onClick: () => navigate({ to: "/echantillons" }) } }); }
     if (sub.kind === "quote") { const c = s.convertProspect(p.id); if (!c) return; s.updateProspect(p.id, { stage: "Devis" }); const exp = new Date(); exp.setDate(exp.getDate() + 30); const qd = s.addQuote({ clientId: c.id, projectName: p.project, projectDescription: "", projectType: "Résidentiel", projectLocation: p.country, expiresAt: exp.toISOString(), lines: [], globalDiscount: 0, fees: 0, vatRate: p.country === "Maroc" ? 20 : 0, status: "Brouillon", paymentTerms: "40 % à la commande, solde avant expédition", leadTime: "6 à 8 semaines", deliveryTerms: "EXW Fès", notes: subText }); toast.success("Devis créé (brouillon)."); navigate({ to: "/devis/$id", params: { id: qd.id } }); }
     setSub(null);
@@ -126,14 +126,14 @@ function ProspectsPage() {
                 </div>
                 <div className="flex min-h-24 flex-1 flex-col gap-2 px-2 pb-2">
                   {items.map((p) => (
-                    <div key={p.id} draggable onDragStart={() => setDragId(p.id)} onDragEnd={() => { setDragId(null); setOver(null); }} className={cn("surface group cursor-grab p-3 active:cursor-grabbing", dragId === p.id && "opacity-50")}>
+                    <div key={p.id} draggable onClick={() => navigate({ to: "/prospects/$id", params: { id: p.id } })} onDragStart={() => setDragId(p.id)} onDragEnd={() => { setDragId(null); setOver(null); }} className={cn("surface group cursor-grab p-3 active:cursor-grabbing", dragId === p.id && "opacity-50")}>
                       <div className="flex items-start gap-2">
                         <GripVertical className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-sm font-medium">{p.name}</div>
                           <div className="truncate text-xs text-muted-foreground">{p.company}</div>
                         </div>
-                        <Actions p={p} />
+                        <div onClick={(e) => e.stopPropagation()}><Actions p={p} /></div>
                       </div>
                       <div className="mt-2 truncate text-xs text-muted-foreground">{p.project}</div>
                       <div className="mt-2 flex items-center justify-between text-xs">
@@ -165,12 +165,12 @@ function ProspectsPage() {
             </TableRow></TableHeader>
             <TableBody>
               {rows.map((p) => (
-                <TableRow key={p.id}>
+                <TableRow key={p.id} className="cursor-pointer" onClick={() => navigate({ to: "/prospects/$id", params: { id: p.id } })}>
                   <TableCell className="font-medium">{p.name}</TableCell><TableCell className="text-muted-foreground">{p.company}</TableCell><TableCell>{p.country}</TableCell>
                   <TableCell className="max-w-56 truncate text-muted-foreground">{p.project}</TableCell><TableCell className="text-muted-foreground">{p.source}</TableCell>
                   <TableCell>{fmtMoney(p.estimatedValue)}</TableCell><TableCell>{p.score}</TableCell>
                   <TableCell><StatusBadge status={p.stage} /></TableCell><TableCell className="text-muted-foreground">{fmtDate(p.lastActivity)}</TableCell>
-                  <TableCell><Actions p={p} /></TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}><Actions p={p} /></TableCell>
                 </TableRow>
               ))}
               {rows.length === 0 && <TableRow><TableCell colSpan={10} className="py-10 text-center text-muted-foreground">Aucun prospect ne correspond.</TableCell></TableRow>}
