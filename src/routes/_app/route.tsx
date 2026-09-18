@@ -8,6 +8,9 @@ import { useAgentEngines } from "@/lib/agents";
 export const Route = createFileRoute("/_app")({
   ssr: false,
   beforeLoad: async () => {
+    // The mock session lives in localStorage — only the client can check it.
+    // On the server we render the placeholder and let the client redirect.
+    if (typeof window === "undefined") return;
     // Wait for localStorage hydration before checking the mock session.
     if (!useStore.persist.hasHydrated()) {
       await new Promise<void>((resolve) => {
