@@ -1,5 +1,5 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -7,28 +7,43 @@ import { useAgentEngines } from "@/lib/agents";
 
 export const Route = createFileRoute("/_app")({
   ssr: false,
-  beforeLoad: async () => {
-    // The mock session lives in localStorage — only the client can check it.
-    // On the server we render the placeholder and let the client redirect.
-    if (typeof window === "undefined") return;
-    // Wait for localStorage hydration before checking the mock session.
-    if (!useStore.persist.hasHydrated()) {
-      await new Promise<void>((resolve) => {
-        const unsub = useStore.persist.onFinishHydration(() => { unsub(); resolve(); });
-        if (useStore.persist.hasHydrated()) { unsub(); resolve(); }
-      });
-    }
-    if (!useStore.getState().session) throw redirect({ to: "/login" });
-  },
   component: AppLayout,
 });
 
 function AppLayout() {
+  const navigate = useNavigate();
   const theme = useStore((s) => s.settings.theme);
+  const [ready, setReady] = useState(false);
+
+  // Gate: wait for localStorage hydration, then check the mock session.
+  // The redirect runs after hydration so the first client render matches
+  // the (empty) server shell — avoids a hydration mismatch.
+  useEffect(() => {
+    let cancelled = false;
+    const check = async () => {
+      if (!useStore.persist.hasHydrated()) {
+        await new Promise<void>((resolve) => {
+          const unsub = useStore.persist.onFinishHydration(() => { unsub(); resolve(); });
+          if (useStore.persist.hasHydrated()) { unsub(); resolve(); }
+        });
+      }
+      if (cancelled) return;
+      if (!useStore.getState().session) {
+        navigate({ to: "/login", replace: true });
+      } else {
+        setReady(true);
+      }
+    };
+    check();
+    return () => { cancelled = true; };
+  }, [navigate]);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
   useAgentEngines();
+
+  if (!ready) return null;
 
   return (
     <div className="flex min-h-screen bg-background">
