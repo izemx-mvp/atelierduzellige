@@ -160,7 +160,7 @@ export const useStore = create<DataState & Actions>()(
         updateClient: (id, p) => upd("clients", id, { ...p, lastActivity: now() }),
         deleteClient: (id) => { del("clients", id); log({ agent: "Utilisateur", action: "Suppression client", target: id, result: "Supprimé", status: "Succès" }); },
 
-        addProspect: (p) => { const n: Prospect = { notes: [], ...p, id: uid(), createdAt: now(), lastActivity: now() }; set((s) => ({ prospects: [n, ...s.prospects] })); log({ agent: "Utilisateur", action: "Création prospect", target: n.name, result: `Étape ${n.stage}`, status: "Succès", link: `/prospects` }); return n; },
+        addProspect: (p) => { const n: Prospect = { notes: [], ...p, id: uid(), createdAt: now(), lastActivity: now() }; set((s) => ({ prospects: [n, ...s.prospects] })); log({ agent: "Utilisateur", action: "Création prospect", target: n.name, result: `Étape ${n.stage}`, status: "Succès", link: `/prospects/${n.id}` }); return n; },
         updateProspect: (id, p) => upd("prospects", id, { ...p, lastActivity: now() }),
         deleteProspect: (id) => del("prospects", id),
         moveProspect: (id, stage) => { upd("prospects", id, { stage, lastActivity: now() }); },
@@ -227,7 +227,7 @@ export const useStore = create<DataState & Actions>()(
         updateShipment: (id, p) => upd("shipments", id, p),
         deleteShipment: (id) => del("shipments", id),
 
-        addAppointment: (a) => { const n: Appointment = { reminders: [{ at: "24h", sent: false }, { at: "1h", sent: false }], ...a, id: uid(), createdAt: now() }; set((s) => ({ appointments: [n, ...s.appointments] })); log({ agent: "Utilisateur", action: "Création rendez-vous", target: n.title, result: n.status, status: "Succès", link: "/rendez-vous" }); return n; },
+        addAppointment: (a) => { const n: Appointment = { reminders: [{ at: "24h", sent: false }, { at: "1h", sent: false }], ...a, id: uid(), createdAt: now() }; set((s) => ({ appointments: [n, ...s.appointments] })); log({ agent: "Utilisateur", action: "Création rendez-vous", target: n.title, result: n.status, status: "Succès", link: "/agents/booking" }); return n; },
         updateAppointment: (id, p) => upd("appointments", id, p),
         deleteAppointment: (id) => del("appointments", id),
 

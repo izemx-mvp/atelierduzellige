@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Sparkles, Loader2, CalendarCheck, Check, X, Bell, ArrowRightLeft, Clock } from "lucide-react";
@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { CalendarWorkspace } from "@/components/appointments/CalendarWorkspace";
 
 export const Route = createFileRoute("/_app/agents/booking")({
   head: () => ({ meta: [{ title: "Agent Prise de rendez-vous — Atelier du Zellige" }, { name: "description", content: "Booking Center : analyse des demandes, proposition de créneaux, confirmation, déplacement et rappels." }, { property: "og:title", content: "Agent Prise de rendez-vous" }, { property: "og:description", content: "Booking Center piloté par IA." }] }),
@@ -63,8 +64,7 @@ function BookingPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Agent IA" title="Prise de rendez-vous" description="Booking Center — de la demande au calendrier global, avec rappels automatiques."
-        actions={<Button variant="outline" asChild><Link to="/rendez-vous"><CalendarCheck className="h-4 w-4" /> Calendrier</Link></Button>} />
+      <PageHeader eyebrow="Agent IA" title="Agent Prise de rendez-vous" description="Demandes, réservations et agenda global réunis dans un seul espace." />
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <KpiCard label="À venir" value={upcoming.length} icon={CalendarCheck} accent />
         <KpiCard label="À confirmer" value={s.appointments.filter((a) => a.status === "Proposé").length} icon={Clock} />
@@ -109,6 +109,7 @@ function BookingPage() {
           </ul>
         </Section>
       </div>
+      <div className="mt-4"><CalendarWorkspace /></div>
       <Section title="Historique de l'agent" className="mt-4" noPadding>
         <ul className="divide-y">{agentLogs.slice(0, 8).map((l) => <li key={l.id} className="flex items-center gap-3 px-5 py-2.5 text-sm"><span className="w-28 text-xs text-muted-foreground">{fmtDateTime(l.date)}</span><span className="font-medium">{l.action}</span><span className="flex-1 truncate text-muted-foreground">{l.target} — {l.result}</span><StatusBadge status={l.status} /></li>)}{agentLogs.length === 0 && <li className="p-6 text-center text-sm text-muted-foreground">Aucune activité.</li>}</ul>
       </Section>

@@ -104,7 +104,7 @@ function Dashboard() {
       <PageHeader eyebrow="Vue d'ensemble" title={`Bonjour, ${useStore.getState().settings.profile.name.split(" ")[0]}`} description="Voici l'état de l'activité aujourd'hui."
         actions={<>
           <Button variant="outline" size="sm" asChild><Link to="/prospects"><UserPlus className="h-4 w-4" /> Prospect</Link></Button>
-          <Button variant="outline" size="sm" asChild><Link to="/rendez-vous"><CalendarPlus className="h-4 w-4" /> Rendez-vous</Link></Button>
+          <Button variant="outline" size="sm" asChild><Link to="/agents/booking"><CalendarPlus className="h-4 w-4" /> Rendez-vous</Link></Button>
           <Button variant="outline" size="sm" asChild><Link to="/echantillons"><FlaskConical className="h-4 w-4" /> Échantillon</Link></Button>
           <Button size="sm" className="bg-gold text-gold-foreground hover:bg-gold/90" asChild><Link to="/devis"><Plus className="h-4 w-4" /> Nouveau devis</Link></Button>
         </>} />
