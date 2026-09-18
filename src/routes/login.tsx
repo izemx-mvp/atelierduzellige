@@ -10,6 +10,7 @@ import { Field } from "@/components/shared";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/login")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Connexion — Atelier du Zellige" },
