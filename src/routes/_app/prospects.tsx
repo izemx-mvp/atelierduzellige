@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/prospects")({
-  head: () => ({ meta: [{ title: "Prospects / CRM — Atelier du Zellige" }, { name: "description", content: "Pipeline commercial : vue Kanban et tableau, qualification et conversion des prospects." }, { property: "og:title", content: "Prospects / CRM — Atelier du Zellige" }, { property: "og:description", content: "Pipeline commercial d'Atelier du Zellige." }] }),
+  head: () => ({ meta: [{ title: "Prospects / CRM — Atelier du Zellige" }, { name: "description", content: "Pipeline commercial : vue Kanban et tableau, qualification et conversion des prospects." }, { property: "og:title", content: "Prospects / CRM — Atelier du Zellige" }, { property: "og:description", content: "Pipeline commercial d'Atelier du Zellige." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ProspectsPage,
 });
 

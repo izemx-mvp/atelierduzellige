@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { CalendarWorkspace } from "@/components/appointments/CalendarWorkspace";
 
 export const Route = createFileRoute("/_app/agents/booking")({
-  head: () => ({ meta: [{ title: "Agent Prise de rendez-vous — Atelier du Zellige" }, { name: "description", content: "Booking Center : analyse des demandes, proposition de créneaux, confirmation, déplacement et rappels." }, { property: "og:title", content: "Agent Prise de rendez-vous" }, { property: "og:description", content: "Booking Center piloté par IA." }] }),
+  head: () => ({ meta: [{ title: "Agent Prise de rendez-vous — Atelier du Zellige" }, { name: "description", content: "Agenda global et centre de réservation : demandes, créneaux, confirmations, déplacements et rappels." }, { property: "og:title", content: "Agent Prise de rendez-vous" }, { property: "og:description", content: "Agenda et Booking Center réunis dans une interface unique." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: BookingPage,
 });
 

@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/agents/cm/idees")({
-  head: () => ({ meta: [{ title: "CM — Idées — Atelier du Zellige" }, { name: "description", content: "Génération de contenus social media assistée par IA : Instagram, Facebook, TikTok." }, { property: "og:title", content: "Community Manager — Idées" }, { property: "og:description", content: "Génération de contenus par l'agent IA Community Manager." }] }),
+  head: () => ({ meta: [{ title: "CM — Idées — Atelier du Zellige" }, { name: "description", content: "Génération de contenus social media assistée par IA : Instagram, Facebook, TikTok." }, { property: "og:title", content: "Community Manager — Idées" }, { property: "og:description", content: "Génération de contenus par l'agent IA Community Manager." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: IdeasPage,
 });
 
@@ -57,7 +57,9 @@ function IdeasPage() {
     if (!schedule) return; const at = new Date(schedule.at).toISOString();
     if (schedule.draft) { const { tmpId, ...rest } = schedule.draft; s.addPost({ ...rest, status: "Planifié", scheduledAt: at }); setDrafts((ds) => ds.filter((x) => x.tmpId !== tmpId)); }
     if (schedule.post) s.updatePost(schedule.post.id, { status: "Planifié", scheduledAt: at });
-    s.log({ agent: "Community Manager", action: "Ajout au planning", target: (schedule.draft ?? schedule.post)!.title, result: fmtDate(at), status: "Succès", link: "/agents/cm/planning" });
+    const scheduledContent = schedule.draft ?? schedule.post;
+    if (!scheduledContent) return;
+    s.log({ agent: "Community Manager", action: "Ajout au planning", target: scheduledContent.title, result: fmtDate(at), status: "Succès", link: "/agents/cm/planning" });
     setSchedule(null); toast.success("Ajouté au planning.", { action: { label: "Voir le planning", onClick: () => navigate({ to: "/agents/cm/planning" }) } });
   };
   const defaultAt = () => { const d = new Date(); d.setDate(d.getDate() + 2); d.setHours(18, 0, 0, 0); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
@@ -160,6 +162,7 @@ function IdeasPage() {
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Réseau"><Select value={cur.network} onValueChange={(v) => upd({ network: v as Network })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Instagram", "Facebook", "TikTok"].map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent></Select></Field>
                 <Field label="Statut"><Select value={cur.status} onValueChange={(v) => upd({ status: v as PostStatus })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{STATUSES.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent></Select></Field>
+                <Field label="Produit associé" className="col-span-2"><Select value={cur.productId ?? "none"} onValueChange={(v) => { const product = s.products.find((x) => x.id === v); upd({ productId: v === "none" ? undefined : v, collection: product?.collection ?? cur.collection }); }}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none">Aucun</SelectItem>{s.products.map((x) => <SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>)}</SelectContent></Select></Field>
               </div>
             </div>
           ); })()}
