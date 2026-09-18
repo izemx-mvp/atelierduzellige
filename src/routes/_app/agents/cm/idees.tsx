@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import riadZelligeAsset from "@/assets/cm-ideas/riad-zellige.png.asset.json";
-import murZelligeAsset from "@/assets/cm-ideas/mur-zellige.png.asset.json";
-import salleDeBainZelligeAsset from "@/assets/cm-ideas/salle-de-bain-zellige.png.asset.json";
+import riadZelligeImage from "@/assets/cm-ideas/riad-zellige.png";
+import murZelligeImage from "@/assets/cm-ideas/mur-zellige.png";
+import salleDeBainZelligeImage from "@/assets/cm-ideas/salle-de-bain-zellige.png";
 
 export const Route = createFileRoute("/_app/agents/cm/idees")({
   head: () => ({ meta: [{ title: "CM — Idées — Atelier du Zellige" }, { name: "description", content: "Génération de contenus social media assistée par IA : Instagram, Facebook, TikTok." }, { property: "og:title", content: "Community Manager — Idées" }, { property: "og:description", content: "Génération de contenus par l'agent IA Community Manager." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -24,9 +24,9 @@ const STATUSES: PostStatus[] = ["Brouillon", "Généré", "Validé", "Planifié"
 type Draft = Omit<SocialPost, "id" | "createdAt"> & { tmpId: string; imageUrl?: string; displayStatus?: "Brouillon" | "À valider" | "Planifié"; displayAt?: string };
 
 const MOCK_IDEAS: Draft[] = [
-  { tmpId: "zellige-riad", title: "Un magnifique riad traditionnel avec des détails en zellige", text: "Une immersion dans l'élégance d'un riad marocain, où chaque motif raconte le geste précis de nos artisans.", hashtags: ["#ZelligeMarocain", "#Riad", "#Artisanat"], cta: "Découvrez notre savoir-faire.", network: "Instagram", type: "Carrousel", collection: "Fès", objective: "Inspiration", tone: "Authentique", language: "FR", status: "Brouillon", imageUrl: riadZelligeAsset.url, displayStatus: "Brouillon", displayAt: "19 septembre 2026 · 10:00" },
-  { tmpId: "zellige-mur", title: "Un mur artistique en zellige marocain aux motifs géométriques", text: "Couleurs, reliefs et géométrie composent un décor vivant, façonné pièce après pièce selon la tradition marocaine.", hashtags: ["#Zellige", "#DesignIntérieur", "#Maroc"], cta: "Imaginez votre prochain décor.", network: "Facebook", type: "Publication", collection: "Atlas", objective: "Présentation produit", tone: "Premium", language: "FR", status: "Validé", imageUrl: murZelligeAsset.url, displayStatus: "À valider", displayAt: "20 septembre 2026 · 14:30" },
-  { tmpId: "zellige-bain", title: "Une salle de bain moderne designée avec du zellige", text: "Le zellige bleu apporte profondeur et lumière à cette salle de bain contemporaine, entre fraîcheur et caractère.", hashtags: ["#SalleDeBain", "#ZelligeBleu", "#Décoration"], cta: "Créez votre projet sur mesure.", network: "Instagram", type: "Reel", collection: "Sur-mesure", objective: "Inspiration", tone: "Élégant", language: "FR", status: "Planifié", imageUrl: salleDeBainZelligeAsset.url, displayStatus: "Planifié", displayAt: "22 septembre 2026 · 18:00" },
+  { tmpId: "zellige-riad", title: "Un magnifique riad traditionnel avec des détails en zellige", text: "Une immersion dans l'élégance d'un riad marocain, où chaque motif raconte le geste précis de nos artisans.", hashtags: ["#ZelligeMarocain", "#Riad", "#Artisanat"], cta: "Découvrez notre savoir-faire.", network: "Instagram", type: "Carrousel", collection: "Fès", objective: "Inspiration", tone: "Authentique", language: "FR", status: "Brouillon", imageUrl: riadZelligeImage, displayStatus: "Brouillon", displayAt: "19 septembre 2026 · 10:00" },
+  { tmpId: "zellige-mur", title: "Un mur artistique en zellige marocain aux motifs géométriques", text: "Couleurs, reliefs et géométrie composent un décor vivant, façonné pièce après pièce selon la tradition marocaine.", hashtags: ["#Zellige", "#DesignIntérieur", "#Maroc"], cta: "Imaginez votre prochain décor.", network: "Facebook", type: "Publication", collection: "Atlas", objective: "Présentation produit", tone: "Premium", language: "FR", status: "Validé", imageUrl: murZelligeImage, displayStatus: "À valider", displayAt: "20 septembre 2026 · 14:30" },
+  { tmpId: "zellige-bain", title: "Une salle de bain moderne designée avec du zellige", text: "Le zellige bleu apporte profondeur et lumière à cette salle de bain contemporaine, entre fraîcheur et caractère.", hashtags: ["#SalleDeBain", "#ZelligeBleu", "#Décoration"], cta: "Créez votre projet sur mesure.", network: "Instagram", type: "Reel", collection: "Sur-mesure", objective: "Inspiration", tone: "Élégant", language: "FR", status: "Planifié", imageUrl: salleDeBainZelligeImage, displayStatus: "Planifié", displayAt: "22 septembre 2026 · 18:00" },
 ];
 
 function IdeasPage() {
