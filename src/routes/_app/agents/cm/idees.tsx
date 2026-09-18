@@ -163,7 +163,7 @@ function IdeasPage() {
               </div>
             </div>
           ); })()}
-          <DialogFooter><Button variant="outline" onClick={() => { setEdit(null); setEditPost(null); }}>Annuler</Button><Button className="bg-gold text-gold-foreground hover:bg-gold/90" onClick={() => { if (edit) { setDrafts((ds) => ds.map((x) => (x.tmpId === edit.tmpId ? edit : x))); setEdit(null); } if (editPost) { const { id, ...rest } = editPost; s.updatePost(id, rest); setEditPost(null); } toast.success("Modifications enregistrées."); }}>Enregistrer</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" onClick={() => { setEdit(null); setEditPost(null); }}>Annuler</Button><Button className="bg-gold text-gold-foreground hover:bg-gold/90" onClick={() => { if (edit) { setDrafts((ds) => ds.some((x) => x.tmpId === edit.tmpId) ? ds.map((x) => (x.tmpId === edit.tmpId ? edit : x)) : [edit, ...ds]); setEdit(null); } if (editPost) { const { id, ...rest } = editPost; s.updatePost(id, rest); setEditPost(null); } toast.success("Modifications enregistrées."); }}>Enregistrer</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 

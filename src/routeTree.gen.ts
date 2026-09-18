@@ -34,6 +34,7 @@ import { Route as AppCommandesIndexRouteImport } from './routes/_app/commandes/i
 import { Route as AppCommandesIdRouteImport } from './routes/_app/commandes/$id'
 import { Route as AppDevisIndexRouteImport } from './routes/_app/devis/index'
 import { Route as AppDevisIdRouteImport } from './routes/_app/devis/$id'
+import { Route as AppProspectsIdRouteImport } from './routes/_app/prospects/$id'
 import { Route as AppAgentsCmIndexRouteImport } from './routes/_app/agents/cm/index'
 import { Route as AppAgentsCmIdeesRouteImport } from './routes/_app/agents/cm/idees'
 import { Route as AppAgentsCmParametresRouteImport } from './routes/_app/agents/cm/parametres'
@@ -163,6 +164,11 @@ const AppDevisIdRoute = AppDevisIdRouteImport.update({
   path: '/devis/$id',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppProspectsIdRoute = AppProspectsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppProspectsRoute,
+} as any)
 const AppAgentsCmIndexRoute = AppAgentsCmIndexRouteImport.update({
   id: '/agents/cm/',
   path: '/agents/cm/',
@@ -195,7 +201,7 @@ export interface FileRoutesByFullPath {
   '/parametres': typeof AppParametresRoute
   '/production': typeof AppProductionRoute
   '/produits': typeof AppProduitsRoute
-  '/prospects': typeof AppProspectsRoute
+  '/prospects': typeof AppProspectsRouteWithChildren
   '/rendez-vous': typeof AppRendezVousRoute
   '/agents/activite': typeof AppAgentsActiviteRoute
   '/agents/booking': typeof AppAgentsBookingRoute
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/clients/$id': typeof AppClientsIdRoute
   '/commandes/$id': typeof AppCommandesIdRoute
   '/devis/$id': typeof AppDevisIdRoute
+  '/prospects/$id': typeof AppProspectsIdRoute
   '/agents/': typeof AppAgentsIndexRoute
   '/clients/': typeof AppClientsIndexRoute
   '/commandes/': typeof AppCommandesIndexRoute
@@ -225,7 +232,7 @@ export interface FileRoutesByTo {
   '/parametres': typeof AppParametresRoute
   '/production': typeof AppProductionRoute
   '/produits': typeof AppProduitsRoute
-  '/prospects': typeof AppProspectsRoute
+  '/prospects': typeof AppProspectsRouteWithChildren
   '/rendez-vous': typeof AppRendezVousRoute
   '/agents/activite': typeof AppAgentsActiviteRoute
   '/agents/booking': typeof AppAgentsBookingRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/clients/$id': typeof AppClientsIdRoute
   '/commandes/$id': typeof AppCommandesIdRoute
   '/devis/$id': typeof AppDevisIdRoute
+  '/prospects/$id': typeof AppProspectsIdRoute
   '/agents': typeof AppAgentsIndexRoute
   '/clients': typeof AppClientsIndexRoute
   '/commandes': typeof AppCommandesIndexRoute
@@ -257,7 +265,7 @@ export interface FileRoutesById {
   '/_app/parametres': typeof AppParametresRoute
   '/_app/production': typeof AppProductionRoute
   '/_app/produits': typeof AppProduitsRoute
-  '/_app/prospects': typeof AppProspectsRoute
+  '/_app/prospects': typeof AppProspectsRouteWithChildren
   '/_app/rendez-vous': typeof AppRendezVousRoute
   '/_app/agents/activite': typeof AppAgentsActiviteRoute
   '/_app/agents/booking': typeof AppAgentsBookingRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/_app/clients/$id': typeof AppClientsIdRoute
   '/_app/commandes/$id': typeof AppCommandesIdRoute
   '/_app/devis/$id': typeof AppDevisIdRoute
+  '/_app/prospects/$id': typeof AppProspectsIdRoute
   '/_app/agents/': typeof AppAgentsIndexRoute
   '/_app/clients/': typeof AppClientsIndexRoute
   '/_app/commandes/': typeof AppCommandesIndexRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/clients/$id'
     | '/commandes/$id'
     | '/devis/$id'
+    | '/prospects/$id'
     | '/agents/'
     | '/clients/'
     | '/commandes/'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/clients/$id'
     | '/commandes/$id'
     | '/devis/$id'
+    | '/prospects/$id'
     | '/agents'
     | '/clients'
     | '/commandes'
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/_app/clients/$id'
     | '/_app/commandes/$id'
     | '/_app/devis/$id'
+    | '/_app/prospects/$id'
     | '/_app/agents/'
     | '/_app/clients/'
     | '/_app/commandes/'
@@ -553,6 +565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevisIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/prospects/$id': {
+      id: '/_app/prospects/$id'
+      path: '/$id'
+      fullPath: '/prospects/$id'
+      preLoaderRoute: typeof AppProspectsIdRouteImport
+      parentRoute: typeof AppProspectsRoute
+    }
     '/_app/agents/cm/': {
       id: '/_app/agents/cm/'
       path: '/agents/cm'
@@ -584,6 +603,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppProspectsRouteChildren {
+  AppProspectsIdRoute: typeof AppProspectsIdRoute
+}
+
+const AppProspectsRouteChildren: AppProspectsRouteChildren = {
+  AppProspectsIdRoute: AppProspectsIdRoute,
+}
+
+const AppProspectsRouteWithChildren = AppProspectsRoute._addFileChildren(
+  AppProspectsRouteChildren,
+)
+
 interface AppRouteRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppCommunicationRoute: typeof AppCommunicationRoute
@@ -593,7 +624,7 @@ interface AppRouteRouteChildren {
   AppParametresRoute: typeof AppParametresRoute
   AppProductionRoute: typeof AppProductionRoute
   AppProduitsRoute: typeof AppProduitsRoute
-  AppProspectsRoute: typeof AppProspectsRoute
+  AppProspectsRoute: typeof AppProspectsRouteWithChildren
   AppRendezVousRoute: typeof AppRendezVousRoute
   AppAgentsActiviteRoute: typeof AppAgentsActiviteRoute
   AppAgentsBookingRoute: typeof AppAgentsBookingRoute
@@ -622,7 +653,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppParametresRoute: AppParametresRoute,
   AppProductionRoute: AppProductionRoute,
   AppProduitsRoute: AppProduitsRoute,
-  AppProspectsRoute: AppProspectsRoute,
+  AppProspectsRoute: AppProspectsRouteWithChildren,
   AppRendezVousRoute: AppRendezVousRoute,
   AppAgentsActiviteRoute: AppAgentsActiviteRoute,
   AppAgentsBookingRoute: AppAgentsBookingRoute,
