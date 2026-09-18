@@ -1,12 +1,12 @@
 import {
   LayoutDashboard, Users, Target, Package, FlaskConical, FileText, ShoppingCart, Factory, Ship,
-  CalendarDays, MessageSquare, Bot, Sparkles, Lightbulb, CalendarRange, SlidersHorizontal, Headset,
+  MessageSquare, Bot, Sparkles, Lightbulb, CalendarRange, SlidersHorizontal, Headset,
   CalendarCheck, Radar, BellRing, BarChart3, Settings, Activity, type LucideIcon,
 } from "lucide-react";
 
 export type AppPath =
   | "/dashboard" | "/clients" | "/prospects" | "/produits" | "/echantillons" | "/devis" | "/commandes"
-  | "/production" | "/export" | "/rendez-vous" | "/communication" | "/agents" | "/agents/cm"
+  | "/production" | "/export" | "/communication" | "/agents" | "/agents/cm"
   | "/agents/cm/idees" | "/agents/cm/planning" | "/agents/cm/parametres" | "/agents/service-client"
   | "/agents/booking" | "/agents/suivi-commandes" | "/agents/relances" | "/agents/activite" | "/analytics" | "/parametres";
 
@@ -28,7 +28,6 @@ export const NAV: NavItem[] = [
   { label: "Commandes", to: "/commandes", icon: ShoppingCart, badgeKey: "lateOrders" },
   { label: "Production / Préparation", to: "/production", icon: Factory },
   { label: "Export & Transport", to: "/export", icon: Ship },
-  { label: "Rendez-vous", to: "/rendez-vous", icon: CalendarDays },
   { label: "Communication", to: "/communication", icon: MessageSquare, badgeKey: "messages" },
   {
     label: "Agents IA", to: "/agents", icon: Bot,
@@ -42,7 +41,7 @@ export const NAV: NavItem[] = [
         ],
       },
       { label: "Service Client & Prospection", to: "/agents/service-client", icon: Headset, badgeKey: "messages" },
-      { label: "Prise de rendez-vous", to: "/agents/booking", icon: CalendarCheck },
+      { label: "Agent Prise de rendez-vous", to: "/agents/booking", icon: CalendarCheck },
       { label: "Suivi des commandes", to: "/agents/suivi-commandes", icon: Radar, badgeKey: "lateOrders" },
       { label: "Relances", to: "/agents/relances", icon: BellRing, badgeKey: "followUps" },
       { label: "Activity Center", to: "/agents/activite", icon: Activity },
@@ -57,6 +56,6 @@ export const ROUTE_LABELS: Record<string, string> = {
   echantillons: "Échantillons", devis: "Devis", commandes: "Commandes", production: "Production / Préparation",
   export: "Export & Transport", "rendez-vous": "Rendez-vous", communication: "Communication", agents: "Agents IA",
   cm: "Community Manager", idees: "Idées", planning: "Planning", parametres: "Paramètres",
-  "service-client": "Service Client & Prospection", booking: "Prise de rendez-vous",
+  "service-client": "Service Client & Prospection", booking: "Agent Prise de rendez-vous",
   "suivi-commandes": "Suivi des commandes", relances: "Relances", activite: "Activity Center", analytics: "Analytics",
 };
